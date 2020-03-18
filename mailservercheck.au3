@@ -2,6 +2,24 @@
 #include <String.au3>
 #include <StaticConstants.au3>
 
+Global $default_server_fqdn="smtp.gmx.net"
+
+; --- LANGUAGE SPECIFIC TEXTS: GERMAN     ---
+
+Global $lang_ip_address			= "IP-Adresse"
+Global $lang_email			= "E-Mail"
+Global $lang_portstate			= "Portstatus"
+Global $lang_not_resolved		= "noch nicht aufgelöst"
+Global $lang_advised_for_sending	= "empfohlen für Versand"
+Global $lang_advised_for_receiving	= "empfohlen für Empfang"
+Global $lang_alt_for_sending		= "Alternative für Versand"
+Global $lang_alt_for_receiving		= "Alternative für Empfang"
+Global $lang_port_open			= "Port offen"
+Global $lang_server_responding		= "Server antwortet"
+Global $lang_hostname_invalid		= "Hostname ungültig"
+
+; --- LANGUAGE SPECIFIC TEXTS: GERMAN END ---
+
 Func _Foreach($aArray, ByRef $iIndex, ByRef $sValue)
   If IsArray($aArray) Then
 	  Local $iLen = UBound($aArray, 1)
@@ -34,45 +52,49 @@ EndFunc
 
 func build_gui()
 
-   $form = GUICreate("E-Mail Portstatus",300,460,100,350)
+   $form = GUICreate($lang_email & " " & $lang_portstate,300,460,100,350)
    Global $server_fqdn = GUICtrlCreateInput("smtp.gmx.net",10,10,200,20)
    Global $check_button = GUICtrlCreateButton("Check",220,8,50,24)
 
-   GuiCtrlCreateLabel("IP-Adresse:",10,55,200,15)
-   Global $lbl_ip_address = GuiCtrlCreateLabel("noch nicht aufgelöst",70,55,200,15)
+   GuiCtrlCreateLabel($lang_ip_address & ":",10,55,200,15)
+   Global $lbl_ip_address = GuiCtrlCreateLabel($lang_not_resolved,70,55,200,15)
 
-   GuiCtrlCreateLabel("Port 587, SMTP(empfohlen für Versand)",10,85,200,15)
-   GuiCtrlCreateLabel("Port offen",10,115,100,15)
-   GuiCtrlCreateLabel("Server antwortet",10,145,100,15)
+   GuiCtrlCreateLabel("Port 587, SMTP(" & $lang_advised_for_sending & ")",10,85,200,15)
+   GuiCtrlCreateLabel($lang_port_open,10,115,100,15)
+   GuiCtrlCreateLabel($lang_server_responding,10,145,100,15)
    Global $LED_587_PORT = GUICtrlCreateIcon($led_grey,'',130,113,20,20)
    Global $LED_587_PROTO= GUICtrlCreateIcon($led_grey,'',130,143,20,20)
 
-   GuiCtrlCreateLabel("Port 25, SMTP(Alternative für Versand)",10,175,200,15)
-   GuiCtrlCreateLabel("Port offen",10,205,100,15)
-   GuiCtrlCreateLabel("Server antwortet",10,235,100,15)
+   GuiCtrlCreateLabel("Port 25, SMTP(" & $lang_alt_for_sending & ")",10,175,200,15)
+   GuiCtrlCreateLabel($lang_port_open,10,205,100,15)
+   GuiCtrlCreateLabel($lang_server_responding,10,235,100,15)
    Global $LED_25_PORT = GUICtrlCreateIcon($led_grey,'',130,203,20,20)
    Global $LED_25_PROTO= GUICtrlCreateIcon($led_grey,'',130,233,20,20)
 
-   GuiCtrlCreateLabel("Port 143, IMAP(Empfohlen für Empfang)",10,265,200,15)
-   GuiCtrlCreateLabel("Port offen",10,295,100,15)
-   GuiCtrlCreateLabel("Server antwortet",10,325,100,15)
+   GuiCtrlCreateLabel("Port 143, IMAP(" & $lang_advised_for_receiving &)",10,265,200,15)
+   GuiCtrlCreateLabel($lang_port_open,10,295,100,15)
+   GuiCtrlCreateLabel($lang_server_responding,10,325,100,15)
    Global $LED_143_PORT = GUICtrlCreateIcon($led_grey,'',130,293,20,20)
    Global $LED_143_PROTO= GUICtrlCreateIcon($led_grey,'',130,323,20,20)
 
-   GuiCtrlCreateLabel("Port 110, POP3(Alternative für Empfang)",10,355,200,15)
-   GuiCtrlCreateLabel("Port offen",10,385,100,15)
-   GuiCtrlCreateLabel("Server antwortet",10,415,100,15)
+   GuiCtrlCreateLabel("Port 110, POP3(" & $lang_alt_for_receiving & ")",10,355,200,15)
+   GuiCtrlCreateLabel($lang_port_open,10,385,100,15)
+   GuiCtrlCreateLabel($lang_server_responding,10,415,100,15)
    Global $LED_110_PORT = GUICtrlCreateIcon($led_grey,'',130,383,20,20)
    Global $LED_110_PROTO= GUICtrlCreateIcon($led_grey,'',130,413,20,20)
 
    Global $used_leds=[$LED_587_PORT,$LED_587_PROTO,$LED_25_PORT,$LED_25_PROTO,$LED_110_PORT,$LED_110_PROTO,$LED_143_PORT,$LED_143_PROTO]
+
+   GUISetState()
+   reset_leds($led_grey)
+
 EndFunc
 
 func check_server($dnsname)
 
    $ip=TCPNameToIP($dnsname)
    if($ip = "") Then
-	  GUICtrlSetData ($lbl_ip_address, "hostname ungültig")
+	  GUICtrlSetData ($lbl_ip_address, $lang_hostname_invalid)
 	  return
    Else
 	  GUICtrlSetData ($lbl_ip_address, $ip)
@@ -167,12 +189,11 @@ func exit_cleanup()
 EndFunc
 
 Func main()
+
    OnAutoItExitRegister("exit_cleanup")
    setup_files()
    TCPStartup()
    build_gui()
-   GUISetState()
-   reset_leds($led_grey)
    $server_scanned=0
 
    while 1
