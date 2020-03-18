@@ -71,7 +71,7 @@ func build_gui()
    Global $LED_25_PORT = GUICtrlCreateIcon($led_grey,'',130,203,20,20)
    Global $LED_25_PROTO= GUICtrlCreateIcon($led_grey,'',130,233,20,20)
 
-   GuiCtrlCreateLabel("Port 143, IMAP(" & $lang_advised_for_receiving &)",10,265,200,15)
+   GuiCtrlCreateLabel("Port 143, IMAP(" & $lang_advised_for_receiving & ")",10,265,200,15)
    GuiCtrlCreateLabel($lang_port_open,10,295,100,15)
    GuiCtrlCreateLabel($lang_server_responding,10,325,100,15)
    Global $LED_143_PORT = GUICtrlCreateIcon($led_grey,'',130,293,20,20)
